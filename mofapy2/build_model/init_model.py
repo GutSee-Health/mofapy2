@@ -10,6 +10,7 @@ import sklearn.decomposition
 from sklearn.impute import SimpleImputer
 
 from mofapy2.core.nodes import *
+from loguru import logger
 
 
 class initModel(object):
@@ -137,7 +138,7 @@ class initModel(object):
                 qmean = np.ones((self.N, self.K)) * qmean
 
             else:
-                print("Wrong initialisation for Z")
+                logger.error("Wrong initialisation for Z")
                 exit()
 
         # Initialise the node
@@ -237,7 +238,7 @@ class initModel(object):
                 qmean = np.ones((self.N, self.K)) * qmean
 
             else:
-                print("Wrong initialisation for Z")
+                logger.error("Wrong initialisation for Z")
                 exit()
 
         # Initialise the node
@@ -388,7 +389,7 @@ class initModel(object):
                 qmean = np.ones((self.N, self.K)) * qmean
 
             else:
-                print("Wrong initialisation for Z")
+                logger.error("Wrong initialisation for Z")
                 exit()
 
         self.nodes["Z"] = ZgU_node(
@@ -523,7 +524,7 @@ class initModel(object):
                 pca.fit(Ytmp)
                 qmean_T1 = pca.transform(Ytmp)
             else:
-                print("%s initialisation not implemented for Z" % qmean_T1)
+                logger.error("%s initialisation not implemented for Z", qmean_T1)
                 exit()
 
         elif isinstance(qmean_T1, np.ndarray):
@@ -533,7 +534,7 @@ class initModel(object):
             qmean_T1 *= np.ones((self.N, self.K))
 
         else:
-            print("Wrong initialisation for Z")
+            logger.error("Wrong initialisation for Z")
             exit(1)
 
         self.nodes["Z"] = SZ_Node(
@@ -610,7 +611,7 @@ class initModel(object):
                     qmean_m = np.ones((self.D[m], self.K)) * qmean
 
                 else:
-                    print("Wrong initialisation for W")
+                    logger.error("Wrong initialisation for W")
                     exit()
 
             else:
@@ -678,7 +679,7 @@ class initModel(object):
                     qmean_S1_tmp = pca.components_.T
                     # qmean_S1_tmp /= np.nanstd(qmean_S1_tmp, axis=0) # Scale weights to unit variance
                 else:
-                    print("%s initialisation not implemented for W" % qmean_S1)
+                    logger.error("%s initialisation not implemented for W", qmean_S1)
                     exit()
 
                 # Scale weights to the variance of the view
@@ -692,7 +693,7 @@ class initModel(object):
                 qmean_S1_tmp = np.ones((self.D[m], self.K)) * qmean_S1
 
             else:
-                print("Wrong initialisation for W")
+                logger.error("Wrong initialisation for W")
                 exit(1)
 
             W_list[m] = SW_Node(

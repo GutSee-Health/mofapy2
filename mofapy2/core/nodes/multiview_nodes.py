@@ -18,6 +18,7 @@ import numpy as np
 
 from .basic_nodes import Node
 from .variational_nodes import Variational_Node
+from loguru import logger
 
 # TODO : check add Basic_Multiview_Mixed_Node(Node,Multiview_Constant_Node)
 
@@ -61,7 +62,7 @@ class Multiview_Node(Node):
         #             self.nodes[m].addMarkovBlanket( **{ k: (v.getNodes()[m] if isinstance(v,Multiview_Node) else v) } )
 
     def getMarkovBlanket(self):
-        print(
+        logger.error(
             "Error: Multiview nodes do not have a markov blanket, use the single-view nodes"
         )
         exit(1)

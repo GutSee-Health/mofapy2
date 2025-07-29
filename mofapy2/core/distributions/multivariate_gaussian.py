@@ -6,6 +6,7 @@ import sys
 from .basic_distributions import Distribution
 
 from mofapy2.core.utils import *
+from loguru import logger
 
 # from mofapy2.core import gpu_utils
 # TODO: Enable GPU support
@@ -109,7 +110,7 @@ class MultivariateGaussian(Distribution):
                 ), "If providing a list, the covariance has to be a list of length D with arrays of dim (N,N)"
             cov = np.array(cov)
         else:
-            print("The covariance needs to be a list or an array.")
+            logger.error("The covariance needs to be a list or an array.")
             sys.exit()
 
         # check 'cov' has the right dimensions
@@ -318,7 +319,7 @@ class MultivariateGaussian_reparam(Distribution):
                 ), "If providing a list, K has to be a list of length D with arrays of dim (N,N)"
             K = np.array(K)
         else:
-            print("The input K needs to be a list or an array.")
+            logger.error("The input K needs to be a list or an array.")
             sys.exit()
 
         if axis_cov == 1:
