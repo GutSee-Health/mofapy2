@@ -17,6 +17,7 @@ from mofapy2.core.nodes.Kc_node import Kc_Node
 from mofapy2.core.nodes.Kg_node import Kg_Node
 from mofapy2.core.gp_utils import *
 from mofapy2.core import gpu_utils
+from loguru import logger
 
 
 # TODO:
@@ -585,27 +586,26 @@ class Sigma_Node_base(Node):
             # F_calc = np.array([[ self.sigma_fun(z, lidx, k, var, i, j) for i in range(self.Nu)] for j in range(self.Nu)])
             for l in range(len(a)):
                 a[l] = np.sum(np.abs(G_sigma_approx[:, :, l] - G_sigma_calc[l]))
-            print(
-                "Sum of absolute differences in gradient of Sigma for lidx",
+            logger.debug(
+                "Sum of absolute differences in gradient of Sigma for lidx %s: %s",
                 lidx,
-                ":",
                 a,
             )
-            print(
-                "Numerical ELBO gradient:",
+            logger.debug(
+                "Numerical ELBO gradient: %s",
                 s.optimize.approx_fprime(
                     z, self.calc_neg_elbo_k, 1.4901161193847656e-08, lidx, k, var
-                ),
+                )
             )
-            print(
-                "Analytical ELBO gradient:", self.calc_neg_elbo_grad_k(z, lidx, k, var)
+            logger.debug(
+                "Analytical ELBO gradient: %s", self.calc_neg_elbo_grad_k(z, lidx, k, var)
             )
-            print("ELBO value:", self.calc_neg_elbo_k(z, lidx, k, var))
-            print(
-                "Difference in ELBO gradient:",
+            logger.debug("ELBO value: %s", self.calc_neg_elbo_k(z, lidx, k, var))
+            logger.debug(
+                "Difference in ELBO gradient: %s",
                 s.optimize.check_grad(
                     self.calc_neg_elbo_k, self.calc_neg_elbo_grad_k, z, lidx, k, var
-                ),
+                )
             )
 
     def optimise(self, var):
@@ -616,7 +616,7 @@ class Sigma_Node_base(Node):
         Parameters:
             - var: Node to interact with
         """
-        print("Optimising sigma node...")
+        logger.info("Optimising sigma node...")
 
         K = var.dim[1]
         assert K == len(self.zeta) and K == self.K, "problem in dropping factor"
@@ -998,7 +998,7 @@ class Sigma_Node_warping(Sigma_Node_base):
         if self.iter >= self.start_opt and self.iter % self.warping_freq == 0:
             ZE = self.markov_blanket["Z"].getExpectation()
             self.align_sample_cov_dtw(ZE)
-            print("Covariates were aligned between groups.")
+            logger.info("Covariates were aligned between groups.")
             self.new_alignment = True
 
         if self.iter >= self.start_opt and self.iter % self.opt_freq == 0:
@@ -1011,12 +1011,12 @@ class Sigma_Node_warping(Sigma_Node_base):
                     if all(1 - self.get_zeta() < 0.1) or all(
                         self.get_sharedness() < 0.1
                     ):
-                        print(
+                        logger.warning(
                             "WARNING: Factors show little shared smooth variation between groups - alignment might not work as intended."
                         )
                 else:
                     if all(1 - self.get_zeta() < 0.1):
-                        print(
+                        logger.warning(
                             "WARNING: Factors show little smooth variation - alignment might not work as intended."
                         )
                 self.new_alignment = False
@@ -1028,7 +1028,7 @@ class Sigma_Node_warping(Sigma_Node_base):
         try:
             from dtw import dtw  # note this is dtw-python not dtw
         except ImportError:
-            print("dtw-python module not found. This is required for alignment.")
+            logger.error("dtw-python module not found. This is required for alignment.")
             pass
 
         paths = []

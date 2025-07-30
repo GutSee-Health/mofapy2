@@ -10,6 +10,7 @@ import h5py
 from sys import platform
 from sklearn.utils.validation import check_array
 from scipy import linalg
+from loguru import logger
 
 
 def _impose_f_order(X):
@@ -139,5 +140,5 @@ def infer_platform():
     elif platform == "darwin":
         return 1e6
     else:
-        print("Platform not recognised")
+        logger.error("Platform not recognised")
         exit()

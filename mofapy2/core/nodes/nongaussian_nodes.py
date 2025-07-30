@@ -26,6 +26,7 @@ from .Tau_nodes import TauD_Node
 
 from mofapy2.core import gpu_utils
 from mofapy2.core.utils import lambdafn
+from loguru import logger
 
 
 ##############################
@@ -84,7 +85,7 @@ class PseudoY(Unobserved_Variational_Node):
         pass
 
     def updateExpectations(self):
-        print(
+        logger.error(
             "Error: expectation updates for pseudodata node depend on the type of likelihood. They have to be specified in a new class."
         )
         exit()
@@ -114,7 +115,7 @@ class PseudoY(Unobserved_Variational_Node):
         return self.params
 
     def calculateELBO(self):
-        print("Not implemented")
+        logger.error("Not implemented")
         exit()
 
 
@@ -488,7 +489,7 @@ class Zero_Inflated_PseudoY_Jaakkola(Unobserved_Variational_Mixed_Node):
         self.mask = self.nas  # TODO mask to be used when calculating variance explained
 
         self.sparsity = self.zeros.sum() / (self.zeros.sum() + self.nonzeros.sum())
-        print("using zero inflated noise model with sparsity ", self.sparsity)
+        logger.info("using zero inflated noise model with sparsity %s", self.sparsity)
 
         # initialise the jaakola node with nas and non zeros masked
         obs_jaakola = (
@@ -516,11 +517,8 @@ class Zero_Inflated_PseudoY_Jaakkola(Unobserved_Variational_Mixed_Node):
 
         for k, v in kwargs.items():
             if k in self.normal_node.markov_blanket.keys():
-                print(
-                    "Error: "
-                    + str(k)
-                    + " is already in the markov blanket of "
-                    + str(self.normal_node)
+                logger.error(
+                    "Error: %s is already in the markov blanket of %s", k, self.normal_node
                 )
                 exit(1)
             elif k == "Tau":
@@ -588,11 +586,8 @@ class Zero_Inflated_Tau_Jaakkola(Unobserved_Variational_Mixed_Node):
 
         for k, v in kwargs.items():
             if k in self.tau_jaakola.markov_blanket.keys():
-                print(
-                    "Error: "
-                    + str(k)
-                    + " is already in the markov blanket of "
-                    + str(self.tau_jaakola)
+                logger.error(
+                    "Error: %s is already in the markov blanket of %s", k, self.tau_jaakola
                 )
                 exit(1)
             elif k == "Y":
@@ -607,11 +602,8 @@ class Zero_Inflated_Tau_Jaakkola(Unobserved_Variational_Mixed_Node):
 
         for k, v in kwargs.items():
             if k in self.tau_normal.markov_blanket.keys():
-                print(
-                    "Error: "
-                    + str(k)
-                    + " is already in the markov blanket of "
-                    + str(self.tau_normal)
+                logger.error(
+                    "Error: %s is already in the markov blanket of %s", k, self.tau_normal
                 )
                 exit(1)
             elif k == "Y":

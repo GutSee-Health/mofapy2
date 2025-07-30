@@ -7,6 +7,7 @@ import numpy.ma as ma
 import os
 import h5py
 from mofapy2.core.nodes import *
+from loguru import logger
 
 # To keep same order of views and groups in the hdf5 file
 # h5py.get_config().track_order = True
@@ -58,7 +59,7 @@ class saveModel:
         # Check that the model is trained
         # NOTE: it might be not trained if saving when training is interrupted
         if not model.trained:
-            print("Note: the model to be saved is not trained.")
+            logger.info("Note: the model to be saved is not trained.")
         self.model = model
 
         # Initialise hdf5 file
@@ -509,7 +510,7 @@ class saveModel:
         pass
 
     def saveParameters(self, nodes="all"):
-        print("saveParameters() is currently depreciated, TO-DO: sort factors")
+        logger.warning("saveParameters() is currently depreciated, TO-DO: sort factors")
         exit()
 
         # Get nodes from the model
